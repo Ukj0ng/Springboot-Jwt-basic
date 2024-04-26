@@ -7,12 +7,12 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import java.io.IOException;
 
-public class MyFilter1 implements Filter {
+public class MyFilter2 implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
         throws IOException, ServletException {
-        System.out.println("필터");
+        System.out.println("필터2");
         chain.doFilter(request, response);
     }
 }
