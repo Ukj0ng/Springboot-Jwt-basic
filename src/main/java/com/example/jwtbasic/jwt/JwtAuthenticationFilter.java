@@ -81,14 +81,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         String jwtToken = JWT.create()
             .withSubject(principalDetails.getUser().getUsername())
-            .withExpiresAt(new Date(System.currentTimeMillis() + (60000 * 10)))
+            .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME))
             .withClaim("id", principalDetails.getUser().getId())
             .withClaim("username", principalDetails.getUser().getUsername())
-            .sign(Algorithm.HMAC256("cos"));
+            .sign(Algorithm.HMAC256(JwtProperties.SECRET));
 
-        response.addHeader("Authorization", "Bearer " + jwtToken);
+        response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + jwtToken);
         System.out.println(jwtToken);
 //        super.successfulAuthentication(request, response, chain, authResult); 이게 있으면 Authorization에 토큰이 안들어가
-        
     }
 }
