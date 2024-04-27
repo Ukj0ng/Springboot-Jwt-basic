@@ -3,6 +3,7 @@ package com.example.jwtbasic.config;
 import com.example.jwtbasic.auth.PrincipalDetailsService;
 import com.example.jwtbasic.filter.MyFilter3;
 import com.example.jwtbasic.jwt.JwtAuthenticationFilter;
+import com.example.jwtbasic.jwt.JwtAuthorizationFilter;
 import com.example.jwtbasic.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,7 @@ public class SecurityConfig {
         AuthenticationManager authenticationManager = authenticationManager(http);
         http
             .authenticationManager(authenticationManager)
-            .addFilterBefore(new MyFilter3(), BasicAuthenticationFilter.class)
+//            .addFilterBefore(new MyFilter3(), BasicAuthenticationFilter.class)
             .csrf(csrf -> csrf
                 .disable())
             .sessionManagement(sessionManagement -> sessionManagement
@@ -60,10 +61,11 @@ public class SecurityConfig {
             .httpBasic(basic -> basic
                 .disable())     // http 통신 안씀
             .addFilter(new JwtAuthenticationFilter(authenticationManager)) // AuthenticationManager를 매개변수로 담아줘야함.
+            .addFilter(new JwtAuthorizationFilter(authenticationManager, userRepository))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/user/**").hasAnyRole("USER", "MANAGER", "ADMIN")
-                .requestMatchers("/api/v1/manager/**").hasAnyRole("MANAGER", "ADMIN")
-                .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/v1/user/**").hasAnyRole("ROLE_USER", "ROLE_MANAGER", "ROLE_ADMIN")   // SpringSecurity는 내부적으로 권한 앞에 "ROLE_"을 기대할 수 있음
+                .requestMatchers("/api/v1/manager/**").hasAnyRole("ROLE_MANAGER", "ROLE_ADMIN")
+                .requestMatchers("/api/v1/admin/**").hasRole("ROLE_ADMIN")
                 .anyRequest().permitAll()
             );
         return http.build();
