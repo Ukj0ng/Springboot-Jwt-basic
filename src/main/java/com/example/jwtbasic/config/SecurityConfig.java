@@ -63,9 +63,9 @@ public class SecurityConfig {
             .addFilter(new JwtAuthenticationFilter(authenticationManager)) // AuthenticationManager를 매개변수로 담아줘야함.
             .addFilter(new JwtAuthorizationFilter(authenticationManager, userRepository))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/user/**").hasAnyRole("ROLE_USER", "ROLE_MANAGER", "ROLE_ADMIN")   // SpringSecurity는 내부적으로 권한 앞에 "ROLE_"을 기대할 수 있음
-                .requestMatchers("/api/v1/manager/**").hasAnyRole("ROLE_MANAGER", "ROLE_ADMIN")
-                .requestMatchers("/api/v1/admin/**").hasRole("ROLE_ADMIN")
+                .requestMatchers("/api/v1/user/**").hasAnyAuthority("ROLE_USER", "ROLE_MANAGER", "ROLE_ADMIN")   // SpringSecurity는 내부적으로 권한 앞에 "ROLE_"을 기대할 수 있음
+                    .requestMatchers("/api/v1/manager/**").hasAnyAuthority("ROLE_MANAGER", "ROLE_ADMIN")
+                .requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
                 .anyRequest().permitAll()
             );
         return http.build();
